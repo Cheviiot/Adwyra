@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Adwyra
+Name[ru]=Adwyra
+GenericName=Application Launcher
+GenericName[ru]=Запуск приложений
+Comment=Elegant application launcher with grid view
+Comment[ru]=Элегантный лаунчер приложений с сеткой иконок
+Exec=adwyra
+Icon=com.github.adwyra
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Utility;
+Keywords=launcher;apps;applications;grid;
+Keywords[ru]=лаунчер;приложения;запуск;сетка;
+StartupNotify=true
+StartupWMClass=adwyra

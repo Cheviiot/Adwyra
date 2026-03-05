@@ -1,0 +1,104 @@
+#!/bin/bash
+# Staplerfile для Adwyra
+
+name='adwyra'
+version='0.1.0'
+release=1
+summary='Elegant application launcher for Linux'
+desc='Adwyra is a minimalist and fast way to launch applications.
+A beautiful grid of icons, instant search, app folders, pages,
+drag & drop reordering and customizable settings.'
+homepage='https://github.com/cheviiot/adwyra'
+maintainer='Cheviiot <cheviiot@example.com>'
+architectures=('all')
+license=('GPL-3.0-or-later')
+group='Graphical desktop/GNOME'
+
+# Зависимости для запуска
+deps=(
+    'python3'
+    'gtk4'
+    'libadwaita'
+)
+deps_debian=(
+    'python3'
+    'python3-gi'
+    'gir1.2-gtk-4.0'
+    'gir1.2-adw-1'
+)
+deps_ubuntu=("${deps_debian[@]}")
+deps_fedora=(
+    'python3'
+    'python3-gobject'
+    'gtk4'
+    'libadwaita'
+)
+deps_arch=(
+    'python'
+    'python-gobject'
+    'gtk4'
+    'libadwaita'
+)
+deps_altlinux=(
+    'python3'
+    'python3-module-pygobject3'
+    'libgtk4'
+    'libadwaita'
+)
+deps_opensuse=(
+    'python3'
+    'python3-gobject'
+    'gtk4'
+    'libadwaita'
+)
+
+# Источники
+sources=(
+    'git+https://github.com/cheviiot/adwyra.git#tag=v${version}'
+)
+checksums=(
+    'SKIP'
+)
+
+# AppStream
+appstream_app_id='com.github.adwyra'
+
+package() {
+    # Бинарный файл
+    install -Dm755 "${srcdir}/adwyra/adwyra" "${pkgdir}/usr/bin/adwyra"
+    
+    # Python модуль
+    install -dm755 "${pkgdir}/usr/lib/adwyra"
+    cp -r "${srcdir}/adwyra/src/adwyra" "${pkgdir}/usr/lib/adwyra/"
+    rm -rf "${pkgdir}/usr/lib/adwyra/adwyra/__pycache__"
+    
+    # Обновляем путь в бинарнике
+    sed -i 's|os.path.join(os.path.dirname(os.path.abspath(__file__)), "src")|\x27/usr/lib/adwyra\x27|' \
+        "${pkgdir}/usr/bin/adwyra"
+    
+    # Desktop файл
+    install-desktop "${srcdir}/adwyra/data/com.github.adwyra.desktop"
+    
+    # Иконки всех размеров
+    for size in 16 24 32 48 64 128 256 512; do
+        install -Dm644 "${srcdir}/adwyra/data/icons/hicolor/${size}x${size}/apps/com.github.adwyra.png" \
+            "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/com.github.adwyra.png"
+    done
+    
+    # AppStream metainfo
+    install -Dm644 "${srcdir}/adwyra/data/com.github.adwyra.metainfo.xml" \
+        "${pkgdir}/usr/share/metainfo/com.github.adwyra.metainfo.xml"
+    
+    # Лицензия
+    install-license "${srcdir}/adwyra/LICENSE"
+}
+
+files() {
+    files-find \
+        "/usr/bin/adwyra" \
+        "/usr/lib/adwyra/**/*" \
+        "/usr/share/applications/com.github.adwyra.desktop" \
+        "/usr/share/icons/hicolor/*/apps/com.github.adwyra.png" \
+        "/usr/share/metainfo/com.github.adwyra.metainfo.xml" \
+        "/usr/share/licenses/LICENSE"
+}

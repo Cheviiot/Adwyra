@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.adwyra</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  
+  <name>Adwyra</name>
+  <name xml:lang="ru">Adwyra</name>
+  
+  <summary>Elegant application launcher for Linux</summary>
+  <summary xml:lang="ru">Элегантный лаунчер приложений для Linux</summary>
+  
+  <description>
+    <p>
+      Adwyra is a minimalist and fast way to launch applications on Linux.
+      A beautiful grid of icons, instant search, and no clutter.
+    </p>
+    <p xml:lang="ru">
+      Adwyra — минималистичный и быстрый способ запускать приложения.
+      Красивая сетка иконок, мгновенный поиск и никаких лишних элементов.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Grid view of all applications with icons</li>
+      <li>Application folders with drag and drop</li>
+      <li>Horizontal pages navigation</li>
+      <li>Pin favorite apps (right-click menu)</li>
+      <li>Instant search filtering</li>
+      <li>Native GNOME/Adwaita design</li>
+      <li>Keyboard shortcuts (Ctrl+F, Esc)</li>
+      <li>Global hotkey support (--toggle)</li>
+      <li>Auto-close on focus loss</li>
+      <li>Customizable settings</li>
+    </ul>
+  </description>
+  
+  <categories>
+    <category>Utility</category>
+    <category>GTK</category>
+  </categories>
+  
+  <keywords>
+    <keyword>launcher</keyword>
+    <keyword>applications</keyword>
+    <keyword>grid</keyword>
+    <keyword xml:lang="ru">лаунчер</keyword>
+    <keyword xml:lang="ru">приложения</keyword>
+    <keyword xml:lang="ru">сетка</keyword>
+  </keywords>
+  
+  <url type="homepage">https://github.com/cheviiot/adwyra</url>
+  <url type="bugtracker">https://github.com/cheviiot/adwyra/issues</url>
+  
+  <launchable type="desktop-id">com.github.adwyra.desktop</launchable>
+  
+  <provides>
+    <binary>adwyra</binary>
+  </provides>
+  
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
+  
+  <content_rating type="oars-1.1" />
+  
+  <releases>
+    <release version="0.1.0" date="2026-03-06">
+      <description>
+        <p>Начальный выпуск:</p>
+        <ul>
+          <li>Сетка приложений с настраиваемым размером</li>
+          <li>Папки с drag and drop</li>
+          <li>Мгновенный поиск</li>
+          <li>Скрытие Dock-приложений</li>
+          <li>Горячие клавиши (--toggle)</li>
+          <li>Автозакрытие при потере фокуса</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  
+  <developer_name>Cheviiot</developer_name>
+</component>

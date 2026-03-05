@@ -1,0 +1,10 @@
+/* Закругление углов окна */
+window.background {
+    border-radius: 12px;
+}
+
+/* Drop состояние для создания папки */
+.drop-hover {
+    background-color: alpha(@accent_color, 0.2);
+    border-radius: 12px;
+}

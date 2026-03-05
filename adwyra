@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Adwyra — элегантный лаунчер приложений для Linux
+"""
+
+import sys
+import os
+
+# Добавляем путь к модулям
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
+
+from adwyra.main import main
+
+if __name__ == "__main__":
+    main()
