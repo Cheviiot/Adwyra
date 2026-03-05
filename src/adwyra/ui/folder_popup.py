@@ -195,11 +195,12 @@ class FolderPopup(Adw.Window):
         dialog.add_response("cancel", "Отмена")
         dialog.add_response("ok", "OK")
         dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_size(280, -1)
         
         entry = Gtk.Entry()
         entry.set_text(data.get("name", ""))
-        entry.set_margin_start(24)
-        entry.set_margin_end(24)
+        entry.set_margin_start(12)
+        entry.set_margin_end(12)
         dialog.set_extra_child(entry)
         
         def on_resp(d, r):
@@ -211,10 +212,11 @@ class FolderPopup(Adw.Window):
     
     def _delete(self, btn):
         dialog = Adw.MessageDialog.new(self, "Удалить папку?")
-        dialog.set_body("Приложения вернутся в главную сетку.")
+        dialog.set_body("Приложения вернутся в сетку.")
         dialog.add_response("cancel", "Отмена")
         dialog.add_response("delete", "Удалить")
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_size(280, -1)
         
         def on_resp(d, r):
             if r == "delete":

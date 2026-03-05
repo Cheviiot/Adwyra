@@ -41,29 +41,6 @@ class MainWindow(Adw.ApplicationWindow):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         overlay.set_child(main_box)
         
-        # Панель заголовка папки (скрыта по умолчанию)
-        self._folder_header = Gtk.Box()
-        self._folder_header.set_margin_top(8)
-        self._folder_header.set_margin_start(12)
-        self._folder_header.set_margin_end(12)
-        self._folder_header.set_visible(False)
-        main_box.append(self._folder_header)
-        
-        back_btn = Gtk.Button.new_from_icon_name("go-previous-symbolic")
-        back_btn.add_css_class("circular")
-        back_btn.connect("clicked", self._on_back)
-        self._folder_header.append(back_btn)
-        
-        self._folder_title = Gtk.Label()
-        self._folder_title.set_hexpand(True)
-        self._folder_title.add_css_class("title-4")
-        self._folder_header.append(self._folder_title)
-        
-        self._folder_del_btn = Gtk.Button.new_from_icon_name("user-trash-symbolic")
-        self._folder_del_btn.add_css_class("circular")
-        self._folder_del_btn.connect("clicked", self._on_folder_delete_btn)
-        self._folder_header.append(self._folder_del_btn)
-        
         # Поиск сверху (компактный, по центру)
         self._search_box = Gtk.Box()
         self._search_box.set_halign(Gtk.Align.CENTER)
@@ -85,22 +62,47 @@ class MainWindow(Adw.ApplicationWindow):
         self._grid = AppGrid()
         self._stack.add_named(self._grid, "main")
         
-        # Сетка папки (фиксированный Grid)
+        # Контейнер папки с inline заголовком
+        folder_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        folder_box.set_margin_start(16)
+        folder_box.set_margin_end(16)
+        folder_box.set_margin_top(12)
+        folder_box.set_margin_bottom(12)
+        
+        # Заголовок папки (inline)
+        folder_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        
+        back_btn = Gtk.Button.new_from_icon_name("go-previous-symbolic")
+        back_btn.add_css_class("flat")
+        back_btn.connect("clicked", self._on_back)
+        folder_header.append(back_btn)
+        
+        self._folder_title = Gtk.Label()
+        self._folder_title.add_css_class("title-2")
+        self._folder_title.set_hexpand(True)
+        self._folder_title.set_halign(Gtk.Align.CENTER)
+        folder_header.append(self._folder_title)
+        
+        self._folder_del_btn = Gtk.Button.new_from_icon_name("user-trash-symbolic")
+        self._folder_del_btn.add_css_class("flat")
+        self._folder_del_btn.connect("clicked", self._on_folder_delete_btn)
+        folder_header.append(self._folder_del_btn)
+        
+        folder_box.append(folder_header)
+        
+        # Сетка папки
         self._folder_grid = Gtk.Grid()
         self._folder_grid.set_row_homogeneous(True)
         self._folder_grid.set_column_homogeneous(True)
         self._folder_grid.set_column_spacing(8)
         self._folder_grid.set_row_spacing(8)
-        self._folder_grid.set_margin_start(16)
-        self._folder_grid.set_margin_end(16)
-        self._folder_grid.set_margin_top(12)
-        self._folder_grid.set_margin_bottom(12)
         self._folder_grid.set_halign(Gtk.Align.CENTER)
         self._folder_grid.set_valign(Gtk.Align.START)
+        folder_box.append(self._folder_grid)
         
         folder_scroll = Gtk.ScrolledWindow()
         folder_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        folder_scroll.set_child(self._folder_grid)
+        folder_scroll.set_child(folder_box)
         self._stack.add_named(folder_scroll, "folder")
         
         # Страница настроек
@@ -183,6 +185,10 @@ class MainWindow(Adw.ApplicationWindow):
         self._grid.set_apps(apps)
     
     def _on_key(self, ctrl, keyval, keycode, state):
+        # Игнорируем клавиши когда открыт диалог
+        if self._has_dialog:
+            return False
+        
         if keyval == Gdk.KEY_Escape:
             if self._current_folder:
                 self._on_back(None)
@@ -198,6 +204,7 @@ class MainWindow(Adw.ApplicationWindow):
         return False
     
     def _check_close(self):
+        # Не закрывать если активны, есть дочернее окно, перетаскивание или диалог
         if self.is_active() or self._child_window or self._is_dragging or self._has_dialog:
             return False
         self.close()
@@ -210,9 +217,9 @@ class MainWindow(Adw.ApplicationWindow):
     def _on_folder_open(self, grid, folder_id):
         self._current_folder = folder_id
         self._populate_folder(folder_id)
-        self._folder_title.set_label(folders.get_folder_name(folder_id))
+        folder_data = folders.get(folder_id)
+        self._folder_title.set_label(folder_data["name"] if folder_data else "Папка")
         self._folder_del_btn.set_visible(True)
-        self._folder_header.set_visible(True)
         self._search_box.set_visible(False)
         self._prefs_btn.set_visible(False)
         self._stack.set_visible_child_name("folder")
@@ -272,8 +279,6 @@ class MainWindow(Adw.ApplicationWindow):
     
     def _on_back(self, btn):
         self._current_folder = None
-        self._folder_header.set_visible(False)
-        self._folder_del_btn.set_visible(True)
         self._search_box.set_visible(True)
         self._prefs_btn.set_visible(True)
         self._stack.set_visible_child_name("main")
@@ -299,11 +304,12 @@ class MainWindow(Adw.ApplicationWindow):
         dialog.add_response("cancel", "Отмена")
         dialog.add_response("ok", "OK")
         dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_size(280, -1)
         
         entry = Gtk.Entry()
         entry.set_text(data.get("name", ""))
-        entry.set_margin_start(24)
-        entry.set_margin_end(24)
+        entry.set_margin_start(12)
+        entry.set_margin_end(12)
         dialog.set_extra_child(entry)
         
         def on_resp(d, r):
@@ -317,10 +323,11 @@ class MainWindow(Adw.ApplicationWindow):
     def _show_delete_dialog(self, folder_id):
         self._has_dialog = True
         dialog = Adw.MessageDialog.new(self, "Удалить папку?")
-        dialog.set_body("Приложения вернутся в главную сетку.")
+        dialog.set_body("Приложения вернутся в сетку.")
         dialog.add_response("cancel", "Отмена")
         dialog.add_response("delete", "Удалить")
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_size(280, -1)
         
         def on_resp(d, r):
             self._has_dialog = False
@@ -337,9 +344,6 @@ class MainWindow(Adw.ApplicationWindow):
         return False
     
     def _open_prefs(self, btn):
-        self._folder_title.set_label("Настройки")
-        self._folder_del_btn.set_visible(False)
-        self._folder_header.set_visible(True)
         self._search_box.set_visible(False)
         self._prefs_btn.set_visible(False)
         self._stack.set_visible_child_name("prefs")
@@ -352,6 +356,28 @@ class MainWindow(Adw.ApplicationWindow):
         box.set_margin_end(16)
         box.set_margin_top(12)
         box.set_margin_bottom(12)
+        
+        # Заголовок с кнопкой назад
+        header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        header_box.set_margin_bottom(8)
+        
+        back_btn = Gtk.Button.new_from_icon_name("go-previous-symbolic")
+        back_btn.add_css_class("flat")
+        back_btn.connect("clicked", self._on_back)
+        header_box.append(back_btn)
+        
+        title = Gtk.Label(label="Настройки")
+        title.add_css_class("title-2")
+        title.set_hexpand(True)
+        title.set_halign(Gtk.Align.CENTER)
+        header_box.append(title)
+        
+        # Spacer для центрирования
+        spacer = Gtk.Box()
+        spacer.set_size_request(34, -1)  # Размер кнопки назад
+        header_box.append(spacer)
+        
+        box.append(header_box)
         
         # Внешний вид
         appearance = Adw.PreferencesGroup()
@@ -419,27 +445,26 @@ class MainWindow(Adw.ApplicationWindow):
         # Горячая клавиша
         hotkey_group = Adw.PreferencesGroup()
         hotkey_group.set_title("Горячая клавиша")
-        hotkey_group.set_description("Назначьте клавишу для быстрого вызова")
+        hotkey_group.set_description("Введите сочетание, например: Super+A, Ctrl+Space")
         box.append(hotkey_group)
         
         # Получить текущую горячую клавишу
         current_hotkey = self._get_current_hotkey()
         
-        self._hotkey_row = Adw.ActionRow()
-        self._hotkey_row.set_title("Горячая клавиша")
-        self._hotkey_row.set_subtitle(current_hotkey or "Не назначена")
-        self._hotkey_row.set_activatable(True)
-        self._hotkey_row.connect("activated", self._on_capture_hotkey)
+        self._hotkey_entry = Adw.EntryRow()
+        self._hotkey_entry.set_title("Сочетание клавиш")
+        self._hotkey_entry.set_text(current_hotkey or "")
+        self._hotkey_entry.connect("apply", self._on_hotkey_apply)
+        self._hotkey_entry.set_show_apply_button(True)
         
-        if current_hotkey:
-            clear_btn = Gtk.Button.new_from_icon_name("edit-clear-symbolic")
-            clear_btn.set_valign(Gtk.Align.CENTER)
-            clear_btn.add_css_class("flat")
-            clear_btn.set_tooltip_text("Удалить")
-            clear_btn.connect("clicked", self._on_clear_hotkey)
-            self._hotkey_row.add_suffix(clear_btn)
+        clear_btn = Gtk.Button.new_from_icon_name("edit-clear-symbolic")
+        clear_btn.set_valign(Gtk.Align.CENTER)
+        clear_btn.add_css_class("flat")
+        clear_btn.set_tooltip_text("Удалить")
+        clear_btn.connect("clicked", self._on_clear_hotkey)
+        self._hotkey_entry.add_suffix(clear_btn)
         
-        hotkey_group.add(self._hotkey_row)
+        hotkey_group.add(self._hotkey_entry)
         
         return box
     
@@ -473,70 +498,137 @@ class MainWindow(Adw.ApplicationWindow):
                     )
                     binding = custom.get_string("binding")
                     if binding:
-                        # Преобразуем в читаемый вид
-                        keyval, mods = Gtk.accelerator_parse(binding)
-                        if keyval:
+                        # Преобразуем в читаемый вид (GTK4)
+                        success, keyval, mods = Gtk.accelerator_parse(binding)
+                        if success and keyval:
                             return Gtk.accelerator_get_label(keyval, mods)
                         return binding
         except Exception:
             pass
         return None
     
-    def _on_capture_hotkey(self, row):
-        """Показать диалог захвата горячей клавиши."""
-        dialog = Adw.MessageDialog.new(self, "Нажмите сочетание клавиш")
-        dialog.set_body("Нажмите нужное сочетание клавиш для вызова Adwyra.\nНапример: Super+A, Ctrl+Space")
-        dialog.add_response("cancel", "Отмена")
-        dialog.set_close_response("cancel")
+    def _reset_dialog_flag(self):
+        self._has_dialog = False
+        return False
+    
+    def _normalize_hotkey(self, text):
+        """Преобразовать текст в GTK accelerator формат."""
+        if not text:
+            return None
+        text = text.strip()
+        # Уже в формате GTK <Mod>key
+        if text.startswith("<"):
+            return text
+        # Формат Super+A -> <Super>a
+        parts = text.split("+")
+        if len(parts) < 2:
+            return None
+        mods = []
+        key = parts[-1].lower()
+        for p in parts[:-1]:
+            p = p.strip().lower()
+            if p in ("super", "mod4"):
+                mods.append("<Super>")
+            elif p in ("ctrl", "control"):
+                mods.append("<Control>")
+            elif p in ("alt", "mod1"):
+                mods.append("<Alt>")
+            elif p == "shift":
+                mods.append("<Shift>")
+        if not mods:
+            return None
+        return "".join(mods) + key
+    
+    def _on_hotkey_apply(self, entry):
+        """Применить введённую горячую клавишу."""
+        text = entry.get_text()
+        accel = self._normalize_hotkey(text)
         
-        # Метка для отображения нажатых клавиш
-        key_label = Gtk.Label(label="Ожидание...")
-        key_label.add_css_class("title-1")
-        key_label.set_margin_top(20)
-        key_label.set_margin_bottom(20)
-        dialog.set_extra_child(key_label)
+        if not accel:
+            # Показать ошибку
+            entry.add_css_class("error")
+            GLib.timeout_add(2000, lambda: entry.remove_css_class("error") or False)
+            return
         
-        self._captured_hotkey = None
+        # Проверка валидности (GTK4 возвращает 3 значения)
+        success, keyval, mods = Gtk.accelerator_parse(accel)
+        if not success or keyval == 0:
+            entry.add_css_class("error")
+            GLib.timeout_add(2000, lambda: entry.remove_css_class("error") or False)
+            return
         
-        def on_key(controller, keyval, keycode, state):
-            # Игнорируем одиночные модификаторы
-            if keyval in (Gdk.KEY_Control_L, Gdk.KEY_Control_R,
-                          Gdk.KEY_Shift_L, Gdk.KEY_Shift_R,
-                          Gdk.KEY_Alt_L, Gdk.KEY_Alt_R,
-                          Gdk.KEY_Super_L, Gdk.KEY_Super_R,
-                          Gdk.KEY_Meta_L, Gdk.KEY_Meta_R):
-                return False
+        # Проверить конфликт
+        conflict = self._check_hotkey_conflict(accel)
+        if conflict:
+            entry.add_css_class("error")
+            entry.set_text(f"Занято: {conflict}")
+            GLib.timeout_add(2500, lambda: (entry.remove_css_class("error"), entry.set_text(text)) or False)
+            return
+        
+        # Сохраняем
+        self._save_hotkey(accel)
+        label = Gtk.accelerator_get_label(keyval, mods)
+        entry.set_text(label or text)
+        entry.add_css_class("success")
+        GLib.timeout_add(1500, lambda: entry.remove_css_class("success") or False)
+    
+    def _check_hotkey_conflict(self, accel):
+        """Проверить, занято ли сочетание клавиш системой."""
+        try:
+            # Проверяем media-keys
+            settings = Gio.Settings.new("org.gnome.settings-daemon.plugins.media-keys")
             
-            mods = state & Gtk.accelerator_get_default_mod_mask()
-            accel = Gtk.accelerator_name(keyval, mods)
-            if accel:
-                # Преобразуем в читаемый вид
-                label = Gtk.accelerator_get_label(keyval, mods)
-                key_label.set_label(label)
-                self._captured_hotkey = accel
-                # Добавляем кнопку подтверждения
-                if "apply" not in [r for r in ["cancel"]]:
-                    dialog.add_response("apply", "Применить")
-                    dialog.set_response_appearance("apply", Adw.ResponseAppearance.SUGGESTED)
-            return True
-        
-        key_controller = Gtk.EventControllerKey.new()
-        key_controller.connect("key-pressed", on_key)
-        dialog.add_controller(key_controller)
-        
-        def on_response(dlg, response):
-            if response == "apply" and self._captured_hotkey:
-                self._save_hotkey(self._captured_hotkey)
-                # Обновить UI
-                label = Gtk.accelerator_get_label(
-                    *Gtk.accelerator_parse(self._captured_hotkey)
-                )
-                self._hotkey_row.set_subtitle(label or self._captured_hotkey)
-            self._has_dialog = False
-        
-        self._has_dialog = True
-        dialog.connect("response", on_response)
-        dialog.present()
+            # Проверяем стандартные шорткаты
+            for key in settings.list_keys():
+                try:
+                    val = settings.get_value(key)
+                    if val.get_type_string() == 's':
+                        if val.get_string() == accel:
+                            return key.replace("-", " ").title()
+                    elif val.get_type_string() == 'as':
+                        if accel in val.get_strv():
+                            return key.replace("-", " ").title()
+                except Exception:
+                    pass
+            
+            # Проверяем custom keybindings (кроме нашего)
+            customs = settings.get_strv("custom-keybindings")
+            for path in customs:
+                if "adwyra" in path:
+                    continue
+                try:
+                    custom = Gio.Settings.new_with_path(
+                        "org.gnome.settings-daemon.plugins.media-keys.custom-keybinding",
+                        path
+                    )
+                    if custom.get_string("binding") == accel:
+                        return custom.get_string("name") or "Другой шорткат"
+                except Exception:
+                    pass
+            
+            # Проверяем WM keybindings
+            try:
+                wm = Gio.Settings.new("org.gnome.desktop.wm.keybindings")
+                for key in wm.list_keys():
+                    bindings = wm.get_strv(key)
+                    if accel in bindings:
+                        return key.replace("-", " ").title()
+            except Exception:
+                pass
+            
+            # Проверяем shell keybindings
+            try:
+                shell = Gio.Settings.new("org.gnome.shell.keybindings")
+                for key in shell.list_keys():
+                    bindings = shell.get_strv(key)
+                    if accel in bindings:
+                        return key.replace("-", " ").title()
+            except Exception:
+                pass
+                
+        except Exception:
+            pass
+        return None
     
     def _save_hotkey(self, accel):
         """Сохранить горячую клавишу в GNOME settings."""
@@ -588,7 +680,7 @@ class MainWindow(Adw.ApplicationWindow):
             custom.reset("binding")
             
             Gio.Settings.sync()
-            self._hotkey_row.set_subtitle("Не назначена")
+            self._hotkey_entry.set_text("")
         except Exception as e:
             print(f"Ошибка удаления горячей клавиши: {e}")
     

@@ -7,7 +7,7 @@ gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gtk, Gio, GObject
 
-from ...core import config, folders
+from ...core import config, folders, favorites
 from .app_tile import AppTile
 from .folder_tile import FolderTile
 
@@ -31,6 +31,7 @@ class AppGrid(Gtk.Box):
         self._apps: list[Gio.AppInfo] = []
         
         self._build()
+        favorites.connect("changed", lambda f: self._populate())
     
     def _build(self):
         # Carousel
@@ -56,11 +57,30 @@ class AppGrid(Gtk.Box):
         while self._carousel.get_n_pages() > 0:
             self._carousel.remove(self._carousel.get_nth_page(0))
         
-        # Элементы: папки + приложения
+        # Сортировка: закреплённые приложения в начале (в порядке favorites)
+        fav_ids = favorites.get_all()
+        fav_apps = []
+        other_apps = []
+        
+        app_map = {a.get_id(): a for a in self._apps}
+        
+        # Сначала закреплённые в их порядке
+        for app_id in fav_ids:
+            if app_id in app_map:
+                fav_apps.append(app_map[app_id])
+        
+        # Затем остальные
+        for app in self._apps:
+            if app.get_id() not in fav_ids:
+                other_apps.append(app)
+        
+        # Элементы: папки + закреплённые + остальные
         items = []
         for fid in folders.get_ids():
             items.append(("folder", fid))
-        for app in self._apps:
+        for app in fav_apps:
+            items.append(("app", app))
+        for app in other_apps:
             items.append(("app", app))
         
         # Пагинация
@@ -115,6 +135,7 @@ class AppGrid(Gtk.Box):
                 tile = AppTile(data)
                 tile.connect("launched", lambda t: self.emit("app-launched"))
                 tile.connect("folder-create", self._on_folder_create)
+                tile.connect("fav-moved", self._on_fav_moved)
                 tile.connect("drag-begin", lambda t: self.emit("drag-begin"))
                 tile.connect("drag-end", lambda t: self.emit("drag-end"))
             
@@ -132,6 +153,11 @@ class AppGrid(Gtk.Box):
     def _on_folder_create(self, tile, app1: str, app2: str):
         folders.create("Новая папка", [app1, app2])
         self._populate()
+    
+    def _on_fav_moved(self, tile, moved_app: str, target_app: str):
+        """Переместить закреплённое приложение."""
+        if favorites.contains(target_app):
+            favorites.move(moved_app, target_app)
     
     def refresh(self):
         self._populate()

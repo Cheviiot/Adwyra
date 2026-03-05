@@ -61,6 +61,29 @@ class Favorites(GObject.Object):
             self._apps.remove(app_id)
             self._save()
     
+    def move(self, app_id: str, target_id: str | None):
+        """Переместить приложение на позицию указанного."""
+        if app_id not in self._apps or app_id == target_id:
+            return
+        
+        if target_id and target_id in self._apps:
+            old_idx = self._apps.index(app_id)
+            target_idx = self._apps.index(target_id)
+            
+            self._apps.remove(app_id)
+            target_idx = self._apps.index(target_id)
+            
+            # Если двигали слева направо - вставляем после target
+            if old_idx < target_idx + 1:
+                self._apps.insert(target_idx + 1, app_id)
+            else:
+                # Справа налево - вставляем перед target
+                self._apps.insert(target_idx, app_id)
+        else:
+            self._apps.remove(app_id)
+            self._apps.append(app_id)
+        self._save()
+    
     def toggle(self, app_id: str) -> bool:
         if self.contains(app_id):
             self.remove(app_id)

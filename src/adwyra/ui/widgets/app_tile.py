@@ -17,6 +17,7 @@ class AppTile(Gtk.Button):
     __gsignals__ = {
         "launched": (GObject.SignalFlags.RUN_LAST, None, ()),
         "folder-create": (GObject.SignalFlags.RUN_LAST, None, (str, str)),
+        "fav-moved": (GObject.SignalFlags.RUN_LAST, None, (str, str)),  # (moved_app, before_app)
         "drag-begin": (GObject.SignalFlags.RUN_LAST, None, ()),
         "drag-end": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
@@ -41,6 +42,9 @@ class AppTile(Gtk.Button):
         box.set_halign(Gtk.Align.CENTER)
         self.set_child(box)
         
+        # Контейнер для иконки с индикатором
+        icon_overlay = Gtk.Overlay()
+        
         # Иконка
         self._icon = Gtk.Image.new_from_gicon(
             self.app_info.get_icon() or Gio.ThemedIcon.new("application-x-executable")
@@ -48,7 +52,18 @@ class AppTile(Gtk.Button):
         self._icon.set_pixel_size(config.get("icon_size"))
         self._icon.add_css_class("app-icon")
         self._icon.set_overflow(Gtk.Overflow.HIDDEN)
-        box.append(self._icon)
+        icon_overlay.set_child(self._icon)
+        
+        # Индикатор закрепления
+        self._pin_badge = Gtk.Image.new_from_icon_name("starred-symbolic")
+        self._pin_badge.set_pixel_size(14)
+        self._pin_badge.set_halign(Gtk.Align.END)
+        self._pin_badge.set_valign(Gtk.Align.START)
+        self._pin_badge.add_css_class("pin-badge")
+        self._pin_badge.set_visible(favorites.contains(self.app_id))
+        icon_overlay.add_overlay(self._pin_badge)
+        
+        box.append(icon_overlay)
         
         # Название
         label = Gtk.Label(label=self.app_info.get_display_name() or "")
@@ -94,7 +109,11 @@ class AppTile(Gtk.Button):
     def _on_drop_enter(self, target, x, y):
         self.add_css_class("drop-hover")
         self._drop_app_id = None
-        self._hover_timeout = GLib.timeout_add(600, self._create_folder_timeout)
+        # Запускать таймер создания папки только если оба приложения не закреплены
+        if not favorites.contains(self.app_id):
+            self._hover_timeout = GLib.timeout_add(600, self._create_folder_timeout)
+        else:
+            self._hover_timeout = None
         return Gdk.DragAction.MOVE
     
     def _on_drop_leave(self, target):
@@ -107,15 +126,25 @@ class AppTile(Gtk.Button):
     def _create_folder_timeout(self):
         self._hover_timeout = None
         if self._drop_app_id and self._drop_app_id != self.app_id:
-            self.emit("folder-create", self._drop_app_id, self.app_id)
+            # Не создавать папку если перетаскиваемое приложение закреплено
+            if not favorites.contains(self._drop_app_id):
+                self.emit("folder-create", self._drop_app_id, self.app_id)
         return False
     
     def _on_drop(self, target, value, x, y):
         self._drop_app_id = value
         self._on_drop_leave(target)
-        # Если уже был таймаут, создаём папку сразу
-        if value and value != self.app_id:
-            self.emit("folder-create", value, self.app_id)
+        
+        if not value or value == self.app_id:
+            return True
+        
+        # Если перетаскиваемое приложение закреплено - перемещаем позицию
+        if favorites.contains(value):
+            self.emit("fav-moved", value, self.app_id)
+        else:
+            # Обычное приложение - создаём папку
+            if not favorites.contains(self.app_id):
+                self.emit("folder-create", value, self.app_id)
         return True
     
     def _setup_menu(self):

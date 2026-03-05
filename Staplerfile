@@ -2,8 +2,8 @@
 # Staplerfile для Adwyra
 
 name='adwyra'
-version='0.1.1'
-release=1
+version='0.2.0'
+release=2
 summary='Elegant application launcher for Linux'
 desc='Adwyra is a minimalist and fast way to launch applications.
 A beautiful grid of icons, instant search, app folders, pages,
@@ -52,9 +52,9 @@ deps_opensuse=(
     'libadwaita'
 )
 
-# Источники
+# Источники - используем архив для предотвращения проблем с кэшем
 sources=(
-    "git+https://github.com/cheviiot/adwyra.git#tag=v${version}"
+    "https://github.com/Cheviiot/adwyra/archive/refs/tags/v${version}.tar.gz"
 )
 checksums=(
     'SKIP'
@@ -65,32 +65,53 @@ appstream_app_id='com.github.adwyra'
 
 package() {
     # Бинарный файл
-    install -Dm755 "${srcdir}/adwyra/adwyra" "${pkgdir}/usr/bin/adwyra"
+    install -Dm755 "${srcdir}/adwyra-${version}/adwyra" "${pkgdir}/usr/bin/adwyra"
     
     # Python модуль
     install -dm755 "${pkgdir}/usr/lib/adwyra"
-    cp -r "${srcdir}/adwyra/src/adwyra" "${pkgdir}/usr/lib/adwyra/"
-    rm -rf "${pkgdir}/usr/lib/adwyra/adwyra/__pycache__"
+    cp -r "${srcdir}/adwyra-${version}/src/adwyra" "${pkgdir}/usr/lib/adwyra/"
+    find "${pkgdir}/usr/lib/adwyra" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
     
     # Обновляем путь в бинарнике
     sed -i 's|os.path.join(os.path.dirname(os.path.abspath(__file__)), "src")|\x27/usr/lib/adwyra\x27|' \
         "${pkgdir}/usr/bin/adwyra"
     
     # Desktop файл
-    install-desktop "${srcdir}/adwyra/data/com.github.adwyra.desktop"
+    install-desktop "${srcdir}/adwyra-${version}/data/com.github.adwyra.desktop"
     
     # Иконки всех размеров
     for size in 16 24 32 48 64 128 256 512; do
-        install -Dm644 "${srcdir}/adwyra/data/icons/hicolor/${size}x${size}/apps/com.github.adwyra.png" \
+        install -Dm644 "${srcdir}/adwyra-${version}/data/icons/hicolor/${size}x${size}/apps/com.github.adwyra.png" \
             "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/com.github.adwyra.png"
     done
     
     # AppStream metainfo
-    install -Dm644 "${srcdir}/adwyra/data/com.github.adwyra.metainfo.xml" \
+    install -Dm644 "${srcdir}/adwyra-${version}/data/com.github.adwyra.metainfo.xml" \
         "${pkgdir}/usr/share/metainfo/com.github.adwyra.metainfo.xml"
     
     # Лицензия
-    install-license "${srcdir}/adwyra/LICENSE"
+    install-license "${srcdir}/adwyra-${version}/LICENSE"
+}
+
+pre_upgrade() {
+    # Удаляем старые Python файлы перед обновлением
+    rm -rf /usr/lib/adwyra
+}
+
+pre_install() {
+    # Удаляем старые файлы если есть
+    rm -rf /usr/lib/adwyra
+}
+
+post_install() {
+    # Обновляем кэш иконок
+    gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+}
+
+post_upgrade() {
+    # Очищаем Python кэш и обновляем иконки
+    find /usr/lib/adwyra -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
 }
 
 files() {

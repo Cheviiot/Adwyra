@@ -13,3 +13,21 @@ window.background {
     background-color: alpha(@accent_color, 0.2);
     border-radius: 12px;
 }
+
+/* Предупреждение о занятой клавише */
+.warning {
+    color: @warning_color;
+}
+/* Успешное сохранение */
+.success {
+    color: @success_color;
+}
+
+/* Индикатор закреплённого приложения */
+.pin-badge {
+    color: @accent_color;
+    background-color: @view_bg_color;
+    border-radius: 50%;
+    padding: 2px;
+    margin: 2px;
+}

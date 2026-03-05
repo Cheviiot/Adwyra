@@ -6,7 +6,7 @@ gi.require_version("Gtk", "4.0")
 
 from gi.repository import Gtk, Gdk, Gio, GObject
 
-from ...core import config, folders
+from ...core import config, folders, favorites
 
 
 class FolderTile(Gtk.Button):
@@ -84,13 +84,35 @@ class FolderTile(Gtk.Button):
         self.add_controller(drop)
     
     def _on_enter(self, target, x, y):
+        # Получить app_id из drag
+        drop = target.get_drop()
+        if drop:
+            # Не принимать закреплённые приложения
+            self._pending_app = None
+            
+            def on_read(drop, result):
+                try:
+                    value = drop.read_value_finish(result)
+                    if isinstance(value, str) and favorites.contains(value):
+                        self._pending_app = None
+                        self.remove_css_class("drop-hover")
+                    else:
+                        self._pending_app = value
+                        self.add_css_class("drop-hover")
+                except Exception:
+                    pass
+            
+            drop.read_value_async(str, 0, None, on_read)
         return Gdk.DragAction.MOVE
     
     def _on_leave(self, target):
-        pass
+        self.remove_css_class("drop-hover")
     
     def _on_drop(self, target, value, x, y):
         if isinstance(value, str):
+            # Не принимать закреплённые приложения
+            if favorites.contains(value):
+                return False
             folders.add_app(self.folder_id, value)
         return True
     
