@@ -14,4 +14,3 @@ Keywords=launcher;apps;applications;launchpad;
 Keywords[ru]=лаунчер;приложения;запуск;
 StartupNotify=true
 StartupWMClass=adwyra-launcher
-NoDisplay=true

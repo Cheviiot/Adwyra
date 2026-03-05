@@ -383,6 +383,10 @@ class MainWindow(Adw.ApplicationWindow):
                 continue
             if not app_info.should_show():
                 continue
+            # Исключаем себя из списка
+            app_id = app_info.get_id() or ""
+            if app_id.replace(".desktop", "") == __app_id__:
+                continue
             name = app_info.get_display_name() or app_info.get_name()
             if not name or not app_info.get_executable():
                 continue
