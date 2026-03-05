@@ -3,6 +3,11 @@ window.background {
     border-radius: 12px;
 }
 
+/* Закругление иконок приложений */
+.app-icon {
+    border-radius: 12px;
+}
+
 /* Drop состояние для создания папки */
 .drop-hover {
     background-color: alpha(@accent_color, 0.2);

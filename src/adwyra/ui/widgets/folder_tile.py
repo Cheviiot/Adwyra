@@ -72,6 +72,8 @@ class FolderTile(Gtk.Button):
                 if info and info.get_icon():
                     img = Gtk.Image.new_from_gicon(info.get_icon())
             img.set_pixel_size(preview_size)
+            img.add_css_class("app-icon")
+            img.set_overflow(Gtk.Overflow.HIDDEN)
             self._grid.attach(img, col, row, 1, 1)
     
     def _setup_drop(self):

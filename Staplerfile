@@ -2,7 +2,7 @@
 # Staplerfile для Adwyra
 
 name='adwyra'
-version='0.1.0'
+version='0.1.1'
 release=1
 summary='Elegant application launcher for Linux'
 desc='Adwyra is a minimalist and fast way to launch applications.
@@ -54,7 +54,7 @@ deps_opensuse=(
 
 # Источники
 sources=(
-    'git+https://github.com/cheviiot/adwyra.git#tag=v${version}'
+    "git+https://github.com/cheviiot/adwyra.git#tag=v${version}"
 )
 checksums=(
     'SKIP'

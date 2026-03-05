@@ -46,6 +46,8 @@ class AppTile(Gtk.Button):
             self.app_info.get_icon() or Gio.ThemedIcon.new("application-x-executable")
         )
         self._icon.set_pixel_size(config.get("icon_size"))
+        self._icon.add_css_class("app-icon")
+        self._icon.set_overflow(Gtk.Overflow.HIDDEN)
         box.append(self._icon)
         
         # Название

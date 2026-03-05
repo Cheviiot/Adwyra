@@ -39,6 +39,8 @@ class FolderAppTile(Gtk.Button):
             self.app_info.get_icon() or Gio.ThemedIcon.new("application-x-executable")
         )
         icon.set_pixel_size(config.get("icon_size"))
+        icon.add_css_class("app-icon")
+        icon.set_overflow(Gtk.Overflow.HIDDEN)
         box.append(icon)
         
         label = Gtk.Label(label=self.app_info.get_display_name() or "")
