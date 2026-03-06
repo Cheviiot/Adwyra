@@ -2,7 +2,7 @@
 # Staplerfile для Adwyra
 
 name='adwyra'
-version='0.3.0'
+version='0.3.1'
 release=1
 summary='Elegant application launcher for Linux'
 desc='Adwyra is a minimalist and fast way to launch applications.

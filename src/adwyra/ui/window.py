@@ -196,11 +196,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.add_controller(key)
         
         # Потеря фокуса окна
-        if config.get("close_on_focus_lost"):
-            self.connect("notify::is-active", self._on_active_changed)
+        self.connect("notify::is-active", self._on_active_changed)
     
     def _on_active_changed(self, window, pspec):
-        if not self.is_active():
+        if not self.is_active() and config.get("close_on_focus_lost"):
             GLib.timeout_add(100, self._check_close)
     
     def _connect_signals(self):
