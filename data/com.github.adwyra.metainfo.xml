@@ -69,6 +69,15 @@
   <content_rating type="oars-1.1" />
   
   <releases>
+    <release version="0.3.3" date="2026-03-07">
+      <description>
+        <p>Исправления:</p>
+        <ul>
+          <li>Скрипты установки больше не удаляют файлы — RPM сам управляет заменой</li>
+          <li>Гарантированно корректное обновление без ошибок ModuleNotFoundError</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.2" date="2026-03-07">
       <description>
         <p>Исправления:</p>
