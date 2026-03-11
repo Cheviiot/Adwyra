@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <img src="screenshots/screenshot.png" alt="Adwyra Screenshot" width="600">
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/GTK-4.0-green?style=flat-square" alt="GTK 4">
   <img src="https://img.shields.io/badge/Libadwaita-1.0-blue?style=flat-square" alt="Libadwaita">
   <img src="https://img.shields.io/badge/Python-3.12+-yellow?style=flat-square" alt="Python">
