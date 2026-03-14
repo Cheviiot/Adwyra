@@ -42,6 +42,8 @@ class Config(GObject.Object):
         "rows": 5,              # Строк в сетке
         "icon_size": 56,        # Размер иконок (px)
         "theme": "system",      # Тема: system, light, dark
+        "language": "auto",     # Язык: auto, ru, en
+        "transparent": False,   # Прозрачность окна
         "close_on_launch": True,          # Закрывать при запуске приложения
         "close_on_focus_lost": True,      # Закрывать при потере фокуса
         "hide_dock_apps": True,           # Скрывать закреплённые в Dock
@@ -102,32 +104,6 @@ class Config(GObject.Object):
     def per_page(self) -> int:
         """Количество элементов на одной странице сетки."""
         return self.get("columns") * self.get("rows")
-    
-    @property
-    def cell_size(self) -> tuple[int, int]:
-        """Размер одной ячейки сетки (ширина, высота) в пикселях."""
-        icon = self.get("icon_size")
-        return (icon + 20, icon + 40)
-    
-    @property
-    def grid_size(self) -> tuple[int, int]:
-        """Минимальный размер области сетки (ширина, высота) в пикселях."""
-        cols = self.get("columns")
-        rows = self.get("rows")
-        cell_w, cell_h = self.cell_size
-        width = cols * cell_w + (cols - 1) * 8 + 32   # 8px между ячейками, 32px отступы
-        height = rows * cell_h + (rows - 1) * 8 + 24
-        return (width, height)
-    
-    @property
-    def window_size(self) -> tuple[int, int]:
-        """Рекомендуемый размер окна приложения (ширина, высота) в пикселях."""
-        cols = self.get("columns")
-        rows = self.get("rows")
-        icon = self.get("icon_size")
-        width = cols * (icon + 32) + 48
-        height = rows * (icon + 48) + 80  # +80 для поиска и индикатора страниц
-        return (width, height)
 
 
 # Глобальный экземпляр конфигурации

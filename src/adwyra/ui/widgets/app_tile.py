@@ -12,8 +12,10 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gdk, Gio, GLib, GObject, Pango
 
 from ...core import config, favorites, aliases, hidden_apps
+from ...core.plugins import plugin_manager
 from ..icon_utils import icon_needs_rounding
 from ..dialogs import RenameDialog
+from ...i18n import _
 
 
 class AppTile(Gtk.Button):
@@ -47,7 +49,7 @@ class AppTile(Gtk.Button):
         self.connect("destroy", self._on_destroy)
     
     def _build(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         box.set_halign(Gtk.Align.CENTER)
         self.set_child(box)
         
@@ -91,8 +93,7 @@ class AppTile(Gtk.Button):
         display_name = aliases.get_display_name(self.app_id, original_name)
         self._label = Gtk.Label(label=display_name)
         self._label.set_ellipsize(Pango.EllipsizeMode.END)
-        self._label.set_width_chars(10)
-        self._label.set_max_width_chars(12)
+        self._label.set_max_width_chars(10)
         self._label.set_lines(2)
         self._label.set_wrap(True)
         self._label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
@@ -204,11 +205,17 @@ class AppTile(Gtk.Button):
         has_alias = aliases.get(self.app_id) is not None
         
         menu = Gio.Menu()
-        menu.append("Открепить" if is_fav else "Закрепить", "tile.toggle")
-        menu.append("Переименовать", "tile.rename")
+        menu.append(_("Открепить") if is_fav else _("Закрепить"), "tile.toggle")
+        menu.append(_("Переименовать"), "tile.rename")
         if has_alias:
-            menu.append("Сбросить имя", "tile.reset_name")
-        menu.append("Скрыть", "tile.hide")
+            menu.append(_("Сбросить имя"), "tile.reset_name")
+        menu.append(_("Скрыть"), "tile.hide")
+        
+        # Пункты от плагинов
+        plugin_items = plugin_manager.get_menu_items()
+        for item in plugin_items:
+            action_name = f"plugin_{item['id']}"
+            menu.append(item["label"], f"tile.{action_name}")
         
         group = Gio.SimpleActionGroup()
         
@@ -228,6 +235,15 @@ class AppTile(Gtk.Button):
         hide_action.connect("activate", lambda a, p: hidden_apps.add(self.app_id))
         group.add_action(hide_action)
         
+        # Действия от плагинов
+        for item in plugin_items:
+            action_name = f"plugin_{item['id']}"
+            cb = item["callback"]
+            app_id = self.app_id
+            p_action = Gio.SimpleAction.new(action_name, None)
+            p_action.connect("activate", lambda a, p, _cb=cb, _aid=app_id: _cb(_aid))
+            group.add_action(p_action)
+        
         self.insert_action_group("tile", group)
         
         popover = Gtk.PopoverMenu.new_from_model(menu)
@@ -245,7 +261,7 @@ class AppTile(Gtk.Button):
         current_alias = aliases.get(self.app_id)
         current_name = current_alias or self.app_info.get_display_name() or ""
         
-        dialog = RenameDialog(window, "Переименовать", current_name)
+        dialog = RenameDialog(window, _("Переименовать"), current_name)
         
         def on_renamed(d, new_name):
             aliases.set(self.app_id, new_name)
@@ -271,4 +287,5 @@ class AppTile(Gtk.Button):
             self.app_info.launch(None, None)
         except GLib.Error:
             pass
+        plugin_manager.notify_app_launched(self.app_id)
         self.emit("launched")

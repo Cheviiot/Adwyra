@@ -8,9 +8,6 @@
 import json
 import os
 
-import gi
-gi.require_version("Gtk", "4.0")
-
 from gi.repository import GLib, GObject
 
 
@@ -31,7 +28,7 @@ class Aliases(GObject.Object):
         """Загружает псевдонимы из файла."""
         if os.path.exists(self._path):
             try:
-                with open(self._path, "r") as f:
+                with open(self._path, "r", encoding="utf-8") as f:
                     return json.load(f)
             except (json.JSONDecodeError, IOError):
                 pass
@@ -40,7 +37,7 @@ class Aliases(GObject.Object):
     def _save(self):
         """Сохраняет псевдонимы в файл."""
         os.makedirs(self._dir, exist_ok=True)
-        with open(self._path, "w") as f:
+        with open(self._path, "w", encoding="utf-8") as f:
             json.dump(self._data, f, indent=2, ensure_ascii=False)
     
     def get(self, app_id: str) -> str | None:

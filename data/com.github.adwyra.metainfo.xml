@@ -23,14 +23,17 @@
     <ul>
       <li>Grid view of all applications with icons</li>
       <li>Application folders with drag and drop</li>
-      <li>Horizontal pages navigation</li>
-      <li>Pin favorite apps (right-click menu)</li>
+      <li>Horizontal swipe page navigation</li>
+      <li>Pin and reorder favorite apps</li>
+      <li>Hide and rename applications</li>
       <li>Instant search filtering</li>
+      <li>Plugin system with API for extensions</li>
+      <li>Internationalization (Russian, English)</li>
+      <li>Window transparency mode</li>
+      <li>Automatic update checking via GitHub</li>
       <li>Native GNOME/Adwaita design</li>
-      <li>Keyboard shortcuts (Ctrl+F, Esc)</li>
-      <li>Global hotkey support (--toggle)</li>
+      <li>Keyboard shortcuts and global hotkey (--toggle)</li>
       <li>Auto-close on focus loss</li>
-      <li>Customizable settings</li>
     </ul>
   </description>
   
@@ -69,6 +72,30 @@
   <content_rating type="oars-1.1" />
   
   <releases>
+    <release version="0.5.0" date="2026-03-15">
+      <description>
+        <p>Новые функции:</p>
+        <ul>
+          <li>Интернационализация — полная поддержка русского и английского языков с выбором в настройках</li>
+          <li>Система плагинов — API для расширений с хуками, пунктами контекстного меню и страницей настроек</li>
+          <li>Прозрачность окна — режим полупрозрачного фона с переключателем в настройках</li>
+          <li>Вкладки в настройках — «Настройки» и «Плагины» через StackSwitcher</li>
+        </ul>
+        <p>Улучшения интерфейса:</p>
+        <ul>
+          <li>Скрытые скроллбары — чистый интерфейс без видимых полос прокрутки</li>
+          <li>Компактная вёрстка — уменьшены отступы на всех страницах</li>
+          <li>Переработан CSS — новые стили, тени, hover-эффекты</li>
+          <li>Удалены точки-индикаторы карусели</li>
+        </ul>
+        <p>Оптимизация:</p>
+        <ul>
+          <li>Кеширование проверки скругления иконок</li>
+          <li>Удалены неиспользуемые свойства конфига (cell_size, grid_size, window_size)</li>
+          <li>Очистка лишних gi.require_version и мёртвого кода</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.4.0" date="2026-03-13">
       <description>
         <p>Новые функции:</p>
@@ -156,6 +183,16 @@
           <li>Поиск активируется только по клику</li>
           <li>Обновление в реальном времени при перемещении в папку</li>
           <li>Закругление иконок через Frame</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.2.0" date="2026-03-06">
+      <description>
+        <p>Новые функции:</p>
+        <ul>
+          <li>Закрепление приложений в избранное с перетаскиванием</li>
+          <li>Inline-заголовок папки с кнопками назад и удаления</li>
+          <li>Страница настроек внутри окна</li>
         </ul>
       </description>
     </release>

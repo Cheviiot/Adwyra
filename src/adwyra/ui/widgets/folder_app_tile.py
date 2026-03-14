@@ -7,6 +7,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GObject
 
 from .base_tile import BaseTile
+from ...i18n import _
 
 
 class FolderAppTile(BaseTile):
@@ -37,7 +38,7 @@ class FolderAppTile(BaseTile):
     
     def _show_menu(self, gesture, n, x, y):
         menu = Gio.Menu()
-        menu.append("Убрать из папки", "tile.remove")
+        menu.append(_("Убрать из папки"), "tile.remove")
         
         group = Gio.SimpleActionGroup()
         action = Gio.SimpleAction.new("remove", None)

@@ -46,6 +46,8 @@ class AppGrid(Gtk.Box):
     
     def _on_realize(self, widget):
         """После realize подключаемся к фокусу окна."""
+        if self._focus_handler is not None:
+            return  # Уже подключены
         window = self.get_root()
         if window:
             self._focus_handler = window.connect("notify::focus-widget", self._on_focus_changed)
@@ -80,12 +82,6 @@ class AppGrid(Gtk.Box):
         scroll_ctrl.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
         scroll_ctrl.connect("scroll", self._on_scroll_capture)
         self._carousel.add_controller(scroll_ctrl)
-        
-        # Индикатор (точки)
-        self._dots = Adw.CarouselIndicatorDots()
-        self._dots.set_carousel(self._carousel)
-        self._dots.set_margin_bottom(8)
-        self.append(self._dots)
     
     def _on_scroll_capture(self, ctrl, dx, dy):
         """Перехватить scroll при активном текстовом вводе."""
@@ -100,13 +96,9 @@ class AppGrid(Gtk.Box):
         self._populate()
     
     def _populate(self):
-        # Обновляем размер карусели
-        self._update_carousel_size()
-        
         # Сохраняем текущую позицию
         current_page = int(self._carousel.get_position())
         
-        self._dots.set_carousel(None)
         self._grids = []
         
         while self._carousel.get_n_pages() > 0:
@@ -148,8 +140,6 @@ class AppGrid(Gtk.Box):
             self._carousel.append(page)
             page_index += 1
         
-        self._dots.set_carousel(self._carousel)
-        
         # Восстанавливаем позицию (не больше количества страниц)
         n_pages = self._carousel.get_n_pages()
         if n_pages > 0 and current_page > 0:
@@ -166,32 +156,27 @@ class AppGrid(Gtk.Box):
         cols = config.get("columns")
         rows = config.get("rows")
         
-        cell_width, cell_height = config.cell_size
-        min_width, min_height = config.grid_size
-        
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        container.set_size_request(min_width, min_height)
         container.set_hexpand(True)
         container.set_vexpand(True)
         
         grid = Gtk.Grid()
         grid.set_row_homogeneous(True)
         grid.set_column_homogeneous(True)
-        grid.set_column_spacing(8)
-        grid.set_row_spacing(8)
-        grid.set_margin_start(16)
-        grid.set_margin_end(16)
-        grid.set_margin_top(12)
-        grid.set_margin_bottom(12)
+        grid.set_column_spacing(6)
+        grid.set_row_spacing(6)
+        grid.set_margin_start(12)
+        grid.set_margin_end(12)
+        grid.set_margin_top(8)
+        grid.set_margin_bottom(4)
         grid.set_halign(Gtk.Align.CENTER)
-        grid.set_valign(Gtk.Align.CENTER)
-        grid.set_size_request(min_width - 32, min_height - 24)
-        
-        # Заполняем все ячейки placeholder'ами
+        grid.set_valign(Gtk.Align.FILL)
+        grid.set_vexpand(True)
+
+        # Placeholderы для стабильной структуры сетки
         for r in range(rows):
             for c in range(cols):
                 placeholder = Gtk.Box()
-                placeholder.set_size_request(cell_width, cell_height)
                 grid.attach(placeholder, c, r, 1, 1)
         
         container.append(grid)
@@ -211,7 +196,7 @@ class AppGrid(Gtk.Box):
                 tile.connect("fav-moved", self._on_fav_moved)
                 tile.connect("drag-begin", lambda t: self.emit("drag-begin"))
                 tile.connect("drag-end", lambda t: self.emit("drag-end"))
-            
+
             row = idx // cols
             col = idx % cols
             
@@ -230,12 +215,6 @@ class AppGrid(Gtk.Box):
         """Переместить закреплённое приложение."""
         if favorites.contains(target_app):
             favorites.move(moved_app, target_app)
-    
-    def _update_carousel_size(self):
-        """Обновить минимальный размер карусели."""
-        min_width, min_height = config.grid_size
-        self._carousel.set_size_request(min_width, min_height)
-        self.set_size_request(min_width, min_height + 30)
     
     @property
     def has_items(self) -> bool:

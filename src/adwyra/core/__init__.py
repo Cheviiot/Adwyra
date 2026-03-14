@@ -10,3 +10,4 @@ from .aliases import aliases
 from .hidden_apps import hidden_apps
 from .keybindings import keybindings
 from .update_checker import UpdateChecker
+from .plugins import plugin_manager, AdwyraPlugin

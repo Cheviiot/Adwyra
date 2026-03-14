@@ -12,6 +12,7 @@ from gi.repository import Gtk, Gio, Adw, GObject
 
 from ...core import hidden_apps
 from ...core.apps import app_service
+from ...i18n import _
 
 
 class HiddenPage(Gtk.Box):
@@ -29,33 +30,33 @@ class HiddenPage(Gtk.Box):
     
     def __init__(self):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.set_margin_start(16)
-        self.set_margin_end(16)
-        self.set_margin_top(12)
-        self.set_margin_bottom(12)
+        self.set_margin_start(6)
+        self.set_margin_end(6)
+        self.set_margin_top(4)
+        self.set_margin_bottom(8)
         
         self._build()
     
     def _build(self):
         # Заголовок с кнопкой назад
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        header_box.set_margin_bottom(8)
+        header_box.set_margin_bottom(1)
         
         back_btn = Gtk.Button.new_from_icon_name("go-previous-symbolic")
         back_btn.add_css_class("flat")
-        back_btn.add_css_class("dimmed")
+        back_btn.add_css_class("overlay-btn")
         back_btn.connect("clicked", lambda b: self.emit("back"))
         header_box.append(back_btn)
         
-        title = Gtk.Label(label="Скрытые приложения")
+        title = Gtk.Label(label=_("Скрытые приложения"))
         title.add_css_class("title-2")
         title.set_hexpand(True)
         title.set_halign(Gtk.Align.CENTER)
         header_box.append(title)
         
-        # Spacer для центрирования
+        # Spacer для центрирования (ширина = кнопка назад)
         spacer = Gtk.Box()
-        spacer.set_size_request(34, -1)
+        spacer.set_size_request(22, -1)
         header_box.append(spacer)
         
         self.append(header_box)
@@ -67,18 +68,15 @@ class HiddenPage(Gtk.Box):
         self.append(self._list)
         
         # Пустое состояние
-        self._empty_label = Gtk.Label(label="Нет скрытых приложений")
-        self._empty_label.add_css_class("dim-label")
+        self._empty_label = Gtk.Label(label=_("Нет скрытых приложений"))
+        self._empty_label.add_css_class("empty-state")
         self._empty_label.set_margin_top(24)
         self.append(self._empty_label)
     
     def populate(self):
         """Заполнить список скрытых приложений."""
         # Очистить список
-        while True:
-            row = self._list.get_row_at_index(0)
-            if not row:
-                break
+        while row := self._list.get_row_at_index(0):
             self._list.remove(row)
         
         hidden_ids = hidden_apps.get_all()
@@ -104,7 +102,7 @@ class HiddenPage(Gtk.Box):
                 restore_btn = Gtk.Button.new_from_icon_name("view-reveal-symbolic")
                 restore_btn.set_valign(Gtk.Align.CENTER)
                 restore_btn.add_css_class("flat")
-                restore_btn.set_tooltip_text("Показать")
+                restore_btn.set_tooltip_text(_("Показать"))
                 restore_btn.connect("clicked", self._on_restore, app_id)
                 row.add_suffix(restore_btn)
                 

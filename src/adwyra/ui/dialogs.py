@@ -13,6 +13,8 @@ gi.require_version("Gtk", "4.0")
 
 from gi.repository import Gtk, GObject
 
+from ..i18n import _
+
 
 class BaseDialog(Gtk.Window):
     """Базовый класс для компактных модальных диалогов без декораций."""
@@ -48,9 +50,9 @@ class BaseDialog(Gtk.Window):
         """Добавить кнопки в конец диалога."""
         self._box.append(self._btn_box)
     
-    def _add_cancel_button(self, label: str = "Отмена"):
+    def _add_cancel_button(self, label: str = None):
         """Добавить кнопку отмены."""
-        btn = Gtk.Button(label=label)
+        btn = Gtk.Button(label=label or _("Отмена"))
         btn.connect("clicked", lambda b: self.close())
         self._btn_box.append(btn)
         return btn
@@ -75,7 +77,7 @@ class RenameDialog(BaseDialog):
         
         self._add_cancel_button()
         
-        ok_btn = Gtk.Button(label="OK")
+        ok_btn = Gtk.Button(label=_("OK"))
         ok_btn.add_css_class("suggested-action")
         ok_btn.connect("clicked", self._on_ok)
         self._entry.connect("activate", self._on_ok)
@@ -114,7 +116,7 @@ class DeleteConfirmDialog(BaseDialog):
         self._btn_box.set_margin_top(8)
         self._add_cancel_button()
         
-        del_btn = Gtk.Button(label="Удалить")
+        del_btn = Gtk.Button(label=_("Удалить"))
         del_btn.add_css_class("destructive-action")
         del_btn.connect("clicked", self._on_delete)
         self._btn_box.append(del_btn)

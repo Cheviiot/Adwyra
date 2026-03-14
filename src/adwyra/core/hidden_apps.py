@@ -32,7 +32,7 @@ class HiddenApps(GObject.Object):
     def _load(self) -> list[str]:
         if os.path.exists(self._path):
             try:
-                with open(self._path, "r") as f:
+                with open(self._path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     return data.get("apps", [])
             except (json.JSONDecodeError, IOError):
@@ -41,7 +41,7 @@ class HiddenApps(GObject.Object):
     
     def _save(self):
         os.makedirs(self._dir, exist_ok=True)
-        with open(self._path, "w") as f:
+        with open(self._path, "w", encoding="utf-8") as f:
             json.dump({"apps": self._apps}, f)
         self.emit("changed")
     

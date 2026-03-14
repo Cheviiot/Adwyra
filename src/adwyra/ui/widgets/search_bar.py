@@ -10,6 +10,8 @@ gi.require_version("Gtk", "4.0")
 
 from gi.repository import Gtk, GObject, GLib
 
+from ...i18n import _
+
 
 class SearchBar(Gtk.Box):
     """Контейнер с полем поиска, активируемым по клику."""
@@ -34,7 +36,7 @@ class SearchBar(Gtk.Box):
         Gtk.Box.set_focusable(self, False)
         
         self._entry = Gtk.SearchEntry()
-        self._entry.set_placeholder_text("Поиск")
+        self._entry.set_placeholder_text(_("Поиск"))
         self._entry.set_hexpand(True)
         self._entry.set_focusable(False)
         self._entry.connect("search-changed", self._on_changed)

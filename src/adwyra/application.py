@@ -19,6 +19,8 @@ from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 from . import __app_id__
 from .ui import MainWindow
 from .core import config
+from .core.plugins import plugin_manager
+from .i18n import _
 
 
 class Application(Adw.Application):
@@ -37,11 +39,11 @@ class Application(Adw.Application):
         )
         
         self.add_main_option("toggle", ord("t"), GLib.OptionFlags.NONE, 
-                             GLib.OptionArg.NONE, "Переключить окно", None)
+                             GLib.OptionArg.NONE, _("Переключить окно"), None)
         self.add_main_option("show", ord("s"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Показать окно", None)
+                             GLib.OptionArg.NONE, _("Показать окно"), None)
         self.add_main_option("hide", ord("h"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Скрыть окно", None)
+                             GLib.OptionArg.NONE, _("Скрыть окно"), None)
         
         self._window = None
     
@@ -100,5 +102,7 @@ class Application(Adw.Application):
         return 0
     
     def _on_close(self, window):
+        plugin_manager.notify_window_hidden()
+        plugin_manager.shutdown()
         self._window = None
         return False

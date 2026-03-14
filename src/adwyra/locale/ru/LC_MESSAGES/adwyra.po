@@ -1,0 +1,264 @@
+# Russian translations for Adwyra package
+# Английские переводы для пакета Adwyra.
+# Copyright (C) 2026 THE Adwyra'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Adwyra package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Adwyra 0.5.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 02:42+1000\n"
+"PO-Revision-Date: 2026-03-14 02:42+1000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: src/adwyra/application.py:42
+msgid "Переключить окно"
+msgstr "Переключить окно"
+
+#: src/adwyra/application.py:44
+msgid "Показать окно"
+msgstr "Показать окно"
+
+#: src/adwyra/application.py:46
+msgid "Скрыть окно"
+msgstr "Скрыть окно"
+
+#: src/adwyra/ui/dialogs.py:55
+msgid "Отмена"
+msgstr "Отмена"
+
+#: src/adwyra/ui/dialogs.py:80
+msgid "OK"
+msgstr "OK"
+
+#: src/adwyra/ui/dialogs.py:119 src/adwyra/ui/pages/prefs_page.py:212
+#: src/adwyra/ui/widgets/folder_tile.py:142
+msgid "Удалить"
+msgstr "Удалить"
+
+#: src/adwyra/ui/window.py:105
+msgid "Ничего не найдено"
+msgstr "Ничего не найдено"
+
+#: src/adwyra/ui/window.py:226 src/adwyra/ui/pages/prefs_page.py:65
+#: src/adwyra/ui/pages/prefs_page.py:100 src/adwyra/ui/pages/prefs_page.py:264
+msgid "Настройки"
+msgstr "Настройки"
+
+#: src/adwyra/ui/window.py:240
+msgid "Закрыть"
+msgstr "Закрыть"
+
+#: src/adwyra/ui/window.py:468
+msgid "Папка"
+msgstr "Папка"
+
+#: src/adwyra/ui/window.py:550 src/adwyra/ui/widgets/app_tile.py:210
+#: src/adwyra/ui/widgets/app_tile.py:265
+#: src/adwyra/ui/widgets/folder_tile.py:141
+msgid "Переименовать"
+msgstr "Переименовать"
+
+#: src/adwyra/ui/window.py:562
+msgid "Удалить папку?"
+msgstr "Удалить папку?"
+
+#: src/adwyra/ui/window.py:563
+msgid "Приложения вернутся в сетку"
+msgstr "Приложения вернутся в сетку"
+
+#: src/adwyra/ui/pages/about_page.py:53 src/adwyra/ui/pages/prefs_page.py:86
+msgid "О программе"
+msgstr "О программе"
+
+#: src/adwyra/ui/pages/about_page.py:79
+msgid "Версия {}"
+msgstr "Версия {}"
+
+#: src/adwyra/ui/pages/about_page.py:90
+msgid "Минималистичный лаунчер приложений для GNOME"
+msgstr "Минималистичный лаунчер приложений для GNOME"
+
+#: src/adwyra/ui/pages/about_page.py:106
+msgid "Лицензия: GPL-3.0"
+msgstr "Лицензия: GPL-3.0"
+
+#: src/adwyra/ui/pages/about_page.py:114
+msgid "Проверка обновлений..."
+msgstr "Проверка обновлений..."
+
+#: src/adwyra/ui/pages/about_page.py:125
+msgid "⚠ Ошибка: {}"
+msgstr "⚠ Ошибка: {}"
+
+#: src/adwyra/ui/pages/about_page.py:130
+msgid "🔄 Доступно: v{}"
+msgstr "🔄 Доступно: v{}"
+
+#: src/adwyra/ui/pages/about_page.py:133
+msgid "✓ Актуальная версия"
+msgstr "✓ Актуальная версия"
+
+#: src/adwyra/ui/pages/hidden_page.py:51 src/adwyra/ui/pages/prefs_page.py:187
+msgid "Скрытые приложения"
+msgstr "Скрытые приложения"
+
+#: src/adwyra/ui/pages/hidden_page.py:71
+msgid "Нет скрытых приложений"
+msgstr "Нет скрытых приложений"
+
+#: src/adwyra/ui/pages/hidden_page.py:108
+msgid "Показать"
+msgstr "Показать"
+
+#: src/adwyra/ui/pages/plugins_page.py:47 src/adwyra/ui/pages/prefs_page.py:110
+msgid "Плагины"
+msgstr "Плагины"
+
+#: src/adwyra/ui/pages/plugins_page.py:62 src/adwyra/ui/pages/prefs_page.py:235
+msgid "Установленные плагины"
+msgstr "Установленные плагины"
+
+#: src/adwyra/ui/pages/plugins_page.py:63
+msgid "Плагины из ~/.config/adwyra/plugins/"
+msgstr "Плагины из ~/.config/adwyra/plugins/"
+
+#: src/adwyra/ui/pages/plugins_page.py:67
+msgid "Нет установленных плагинов"
+msgstr "Нет установленных плагинов"
+
+#: src/adwyra/ui/pages/prefs_page.py:121
+msgid "Внешний вид"
+msgstr "Внешний вид"
+
+#: src/adwyra/ui/pages/prefs_page.py:125
+msgid "Тема"
+msgstr "Тема"
+
+#: src/adwyra/ui/pages/prefs_page.py:126
+msgid "Системная"
+msgstr "Системная"
+
+#: src/adwyra/ui/pages/prefs_page.py:126
+msgid "Светлая"
+msgstr "Светлая"
+
+#: src/adwyra/ui/pages/prefs_page.py:126
+msgid "Тёмная"
+msgstr "Тёмная"
+
+#: src/adwyra/ui/pages/prefs_page.py:133
+msgid "Размер иконок"
+msgstr "Размер иконок"
+
+#: src/adwyra/ui/pages/prefs_page.py:134
+msgid "Маленький (56)"
+msgstr "Маленький (56)"
+
+#: src/adwyra/ui/pages/prefs_page.py:134
+msgid "Средний (72)"
+msgstr "Средний (72)"
+
+#: src/adwyra/ui/pages/prefs_page.py:134
+msgid "Большой (96)"
+msgstr "Большой (96)"
+
+#: src/adwyra/ui/pages/prefs_page.py:141
+msgid "Прозрачность окна"
+msgstr "Прозрачность окна"
+
+#: src/adwyra/ui/pages/prefs_page.py:148
+msgid "Сетка"
+msgstr "Сетка"
+
+#: src/adwyra/ui/pages/prefs_page.py:152
+msgid "Колонки"
+msgstr "Колонки"
+
+#: src/adwyra/ui/pages/prefs_page.py:158
+msgid "Строки"
+msgstr "Строки"
+
+#: src/adwyra/ui/pages/prefs_page.py:165
+msgid "Поведение"
+msgstr "Поведение"
+
+#: src/adwyra/ui/pages/prefs_page.py:169
+msgid "Закрывать при запуске"
+msgstr "Закрывать при запуске"
+
+#: src/adwyra/ui/pages/prefs_page.py:175
+msgid "Закрывать при потере фокуса"
+msgstr "Закрывать при потере фокуса"
+
+#: src/adwyra/ui/pages/prefs_page.py:181
+msgid "Скрывать закреплённые в Dock"
+msgstr "Скрывать закреплённые в Dock"
+
+#: src/adwyra/ui/pages/prefs_page.py:188
+msgid "Приложения, удалённые из сетки"
+msgstr "Приложения, удалённые из сетки"
+
+#: src/adwyra/ui/pages/prefs_page.py:196
+msgid "Горячая клавиша"
+msgstr "Горячая клавиша"
+
+#: src/adwyra/ui/pages/prefs_page.py:197
+msgid "Введите сочетание, например: Super+A, Ctrl+Space"
+msgstr "Введите сочетание, например: Super+A, Ctrl+Space"
+
+#: src/adwyra/ui/pages/prefs_page.py:203
+msgid "Сочетание клавиш"
+msgstr "Сочетание клавиш"
+
+#: src/adwyra/ui/pages/prefs_page.py:236
+msgid "Плагины из /usr/lib/adwyra/plugins/ и ~/.config/adwyra/plugins/"
+msgstr "Плагины из /usr/lib/adwyra/plugins/ и ~/.config/adwyra/plugins/"
+
+#: src/adwyra/ui/pages/prefs_page.py:301
+msgid "Занято: {}"
+msgstr "Занято: {}"
+
+#: src/adwyra/ui/widgets/app_tile.py:209
+msgid "Открепить"
+msgstr "Открепить"
+
+#: src/adwyra/ui/widgets/app_tile.py:209
+msgid "Закрепить"
+msgstr "Закрепить"
+
+#: src/adwyra/ui/widgets/app_tile.py:212
+msgid "Сбросить имя"
+msgstr "Сбросить имя"
+
+#: src/adwyra/ui/widgets/app_tile.py:213
+msgid "Скрыть"
+msgstr "Скрыть"
+
+#: src/adwyra/ui/widgets/folder_app_tile.py:41
+msgid "Убрать из папки"
+msgstr "Убрать из папки"
+
+#: src/adwyra/ui/widgets/search_bar.py:39
+msgid "Поиск"
+msgstr "Поиск"
+
+#: src/adwyra/ui/pages/prefs_page.py
+msgid "Язык"
+msgstr "Язык"
+
+#: src/adwyra/ui/pages/prefs_page.py
+msgid "Авто"
+msgstr "Авто"
+
+#: src/adwyra/ui/pages/prefs_page.py
+msgid "Требуется перезапуск"
+msgstr "Требуется перезапуск"

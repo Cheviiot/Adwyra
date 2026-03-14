@@ -11,6 +11,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gdk, Gio, GObject, Pango
 
 from ...core import config, folders, favorites
+from ...i18n import _
 
 
 class FolderTile(Gtk.Button):
@@ -45,12 +46,13 @@ class FolderTile(Gtk.Button):
             self._folders_handler = None
     
     def _build(self):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         box.set_halign(Gtk.Align.CENTER)
         self.set_child(box)
         
         # Превью 3x3
         self._grid = Gtk.Grid()
+        self._grid.add_css_class("folder-preview")
         self._grid.set_row_homogeneous(True)
         self._grid.set_column_homogeneous(True)
         self._grid.set_row_spacing(2)
@@ -63,6 +65,7 @@ class FolderTile(Gtk.Button):
         self._label = Gtk.Label()
         self._label.set_ellipsize(Pango.EllipsizeMode.END)
         self._label.set_max_width_chars(12)
+        self._label.add_css_class("app-label")
         box.append(self._label)
         
         self._refresh(None)
@@ -135,8 +138,8 @@ class FolderTile(Gtk.Button):
     
     def _show_menu(self, gesture, n, x, y):
         menu = Gio.Menu()
-        menu.append("Переименовать", "fld.rename")
-        menu.append("Удалить", "fld.delete")
+        menu.append(_("Переименовать"), "fld.rename")
+        menu.append(_("Удалить"), "fld.delete")
         
         group = Gio.SimpleActionGroup()
         
